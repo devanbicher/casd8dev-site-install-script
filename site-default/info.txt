@@ -1,0 +1,3 @@
+in my drupal 8 install drush complained if I didn't have the config directory made.
+
+You should probably setup the settings.php, baseurl, etc files like your previous isntallation.
