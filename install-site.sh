@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#dbname=$1
+set -e
 
 site=$1
 short=$2
@@ -14,7 +14,7 @@ docroot=$3
 
 if [ "$site" = "" ]
 then
-    echo "No name provided
+    echo "No site url provided
 Usage: $0 <full site url> <shortname> <docroot>"
 exit 1
 fi
@@ -26,18 +26,21 @@ Usage: $0 <full site url> <shortname> <docroot>"
 exit 1
 fi
 
-if [ "$docroot" = "" -o "$docroot" = "casdev"]
+if [ "$docroot" = "" ] || [ "$docroot" = "casdev"]
 then
     echo "no docroot provided (or you chose to use casdev, the default)
 Usage: $0 <full site url> <shortname> <docroot(d9, d8, or casdev[default])>
 
 Using default of /var/www/casdev/web/
 "
-    rootpath= /var/www/casdev/web
+    rootpath='/var/www/casdev/web'
     cd $rootpath/sites/
 
-    dbprefix="casdev"
+    pwd
     
+    dbprefix='casdev'
+
+    echo $dbprefix
     
     #else d9
     #else d8
@@ -52,24 +55,27 @@ pass=$(pwgen -s 16)
 
 dbname="$dbprefix""_$short""_$year"
 
+echo $dbname
+
 sudo mysql -e "CREATE DATABASE $dbname"
 sudo mysql -e "CREATE USER '$dbname'@'%' IDENTIFIED BY '$pass'"
 sudo mysql -e "GRANT USAGE ON * . * TO '$dbname'@'%' IDENTIFIED BY '$pass' WITH MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0"
 sudo mysql -e "GRANT ALL PRIVILEGES ON $dbname . * TO '$dbname'@'%'"
+
+echo "don't forget to remove the printed out db/user/pass info after this script is fully working."
 
 echo "dbname:  $dbname
 user: $dbname 
 pass: $pass 
 
 mysql://$dbname:$pass@localhost/$dbname
-" >> dbinfo/$dbname.txt
+" >> ~/install-site/dbinfo/$dbname.txt
 
 #copy folder and stuff
 
-
-
 #add site to sites.php
-echo "\$sites['$site'] = '$short';
+echo "
+\$sites['$site'] = '$short';
 " >> sites.php
 
 #setup alias
@@ -81,16 +87,50 @@ $short:
 
 drush cc drush
 
-drush @'$dbprefix'.$short site-install standard --account-name='$dbname'_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name='CAS Dev Server $short Site'
+#setup php files for new site
+
+cp -r ~/install-site/site-default $short
+chgrp -R drupaladm $short
+cd $short
+
+#baseurl file
+echo "<?php  \$baseurl = 'http://$site' ?>;" > baseurl.php
+
+#files directory
+mkdir $rootpath/files/$short
+mkdir $rootpath/files/$short/private
+mkdir $rootpath/files/$short/config
+
+chmod o+w -R $rootpath/files/$short
+
+ln -s $rootpath/files .
+
+echo "<?php  \$public_files_dir = '$rootpath/files/$short'; ?> " > publicfiles.php
+
+#hashsalt
+echo "<?php  \$hash_salt = '$(pwgen -s 75)'; ?>" > hash_salt.php
+
+#db info file
+echo "<?php \$dbname = '$dbname';
+\$dbuser = '$dbname';
+\$dbpass = '$pass';
+\$dbhost = 'localhost';
+?>" > dbinfo.php
+
+
+#drush -l $site site-install standard --account-name='$dbname'_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name='CAS Dev Server $short Site'
 #--db-url=mysql://$dbname:$pass@localhost/$dbname
 
+#module enabling
+drush -y -l $site en ldap_authentication
 
 
-#to-do:
-#
-# add line to sites.php
-# add an alias
-# setup base_url
-# setup config_sync_directory
+echo "Still to do in this script:
+    - Figure out how to import ldap server config!! ARGH!
+    - send an email to the user with the info
+    - TURN ON development mode, YOU NEED THIS
+    
+    Eventually:
+    - move the site config, modules, ldap, etc to an install profile
 
-#copy the site folder from somewhere
+"

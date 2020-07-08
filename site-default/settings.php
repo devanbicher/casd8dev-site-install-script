@@ -88,7 +88,6 @@
  * ];
  * @endcode
  */
-$databases = [];
 
 /**
  * Customizing database settings.
@@ -261,7 +260,7 @@ $databases = [];
  * directory in the public files path. The setting below allows you to set
  * its location.
  */
-# $settings['config_sync_directory'] = '/directory/outside/webroot';
+ $settings['config_sync_directory'] = $public_files_dir.'/config';
 
 /**
  * Settings:
@@ -290,7 +289,10 @@ $databases = [];
  *   $settings['hash_salt'] = file_get_contents('/home/example/salt.txt');
  * @endcode
  */
-$settings['hash_salt'] = 'VKgX4NWCSu_xlH0-mvYvayag_Us6mLbRFYNk3br5Bm4QApnlPT1ohcZ7Sk8Uhy0AgkrAFFNDJw';
+
+require 'hash_salte.php';
+
+$settings['hash_salt'] = $hash_salt;
 
 /**
  * Deployment identifier.
@@ -529,7 +531,9 @@ if ($settings['hash_salt']) {
  * must exist and be writable by Drupal. This directory must be relative to
  * the Drupal installation directory and be accessible over the web.
  */
-# $settings['file_public_path'] = 'sites/default/files';
+ require publicfiles.php;
+ 
+ $settings['file_public_path'] = $public_files_dir;
 
 /**
  * Private file path:
@@ -544,7 +548,7 @@ if ($settings['hash_salt']) {
  * See https://www.drupal.org/documentation/modules/file for more information
  * about securing private files.
  */
-# $settings['file_private_path'] = '';
+ $settings['file_private_path'] = $public_files_dir.'/private';
 
 /**
  * Temporary file path:
@@ -557,7 +561,7 @@ if ($settings['hash_salt']) {
  *
  * @see \Drupal\Component\FileSystem\FileSystem::getOsTemporaryDirectory()
  */
-# $settings['file_temp_path'] = '/tmp';
+ $settings['file_temp_path'] = '/tmp';
 
 /**
  * Session write interval:
@@ -792,17 +796,20 @@ $settings['migrate_node_migrate_type_classic'] = FALSE;
 # if (file_exists($app_root . '/' . $site_path . '/settings.local.php')) {
 #   include $app_root . '/' . $site_path . '/settings.local.php';
 # }
+
+require 'dbinfo.php';
+
 $databases['default']['default'] = array (
-  'database' => 'd8multisitenumber1',
-  'username' => 'd8multisitenumber1',
-  'password' => 'kQtsPtf2WroL08gf',
+  'database' => $dbname,
+  'username' => $dbuser,
+  'password' => $dbpass,
   'prefix' => '',
-  'host' => 'localhost',
+  'host' => $dbhost,
   'port' => '',
   'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
   'driver' => 'mysql',
 );
 
-$settings['config_sync_directory'] = '/directory/outside/webroot';
+require 'baseurl.php'
 
-$base_url = 'https://d-site1.cas.lehigh.edu';
+$settings['base_url'] = $baseurl;
