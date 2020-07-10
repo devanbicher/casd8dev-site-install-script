@@ -39,13 +39,11 @@ Using default of /var/www/casdev/web/
     pwd
     
     dbprefix='casdev'
-
-    echo $dbprefix
+    
     
     #else d9
     #else d8
-    #else exit
-    
+    #else exit    
     
 fi
 
@@ -83,7 +81,7 @@ echo "
 $short:
   root: $rootpath
   uri: http://$site
-" >> $rootpath/../drush/sites/'$dbprefix'.sites.yml
+" >> "$rootpath"/../drush/sites/"$dbprefix".sites.yml
 
 drush cc drush
 
@@ -94,7 +92,7 @@ chgrp -R drupaladm $short
 cd $short
 
 #baseurl file
-echo "<?php  \$baseurl = 'http://$site' ?>;" > baseurl.php
+echo "<?php  \$baseurl = 'http://$site'; ?>" > baseurl.php
 
 #files directory
 mkdir $rootpath/files/$short
@@ -105,7 +103,7 @@ chmod o+w -R $rootpath/files/$short
 
 ln -s $rootpath/files .
 
-echo "<?php  \$public_files_dir = '$rootpath/files/$short'; ?> " > publicfiles.php
+echo "<?php  \$public_files_dir = 'files/$short'; ?> " > publicfiles.php
 
 #hashsalt
 echo "<?php  \$hash_salt = '$(pwgen -s 75)'; ?>" > hash_salt.php

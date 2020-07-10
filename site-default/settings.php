@@ -260,6 +260,9 @@
  * directory in the public files path. The setting below allows you to set
  * its location.
  */
+
+ require 'publicfiles.php';
+
  $settings['config_sync_directory'] = $public_files_dir.'/config';
 
 /**
@@ -290,7 +293,7 @@
  * @endcode
  */
 
-require 'hash_salte.php';
+require 'hash_salt.php';
 
 $settings['hash_salt'] = $hash_salt;
 
@@ -531,7 +534,6 @@ if ($settings['hash_salt']) {
  * must exist and be writable by Drupal. This directory must be relative to
  * the Drupal installation directory and be accessible over the web.
  */
- require publicfiles.php;
  
  $settings['file_public_path'] = $public_files_dir;
 
@@ -810,6 +812,6 @@ $databases['default']['default'] = array (
   'driver' => 'mysql',
 );
 
-require 'baseurl.php'
+require 'baseurl.php';
 
 $settings['base_url'] = $baseurl;
