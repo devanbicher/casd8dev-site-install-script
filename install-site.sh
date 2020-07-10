@@ -149,13 +149,15 @@ echo "<?php \$dbname = '$dbname';
 ?>" > dbinfo.php
 
 
-echo "drush -l $site site-install standard --account-name='$dbname'_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name='$dbprefix $short Site (casd8devserver)'"
+echo "drush -l $site site-install standard --account-name=""$dbname""_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name='$dbprefix $short Site (casd8devserver)'"
 #--db-url=mysql://$dbname:$pass@localhost/$dbname
 
-#module enabling
-drush -y -l $site en ldap_authentication, admin_toolbar
+drush -l $site site-install standard --account-name="$dbname"_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name='$dbprefix $short Site (casd8devserver)'
 
-drush uli
+#module enabling
+drush -y -l $site en ldap_authentication,admin_toolbar
+
+drush -l $site uli
 
 echo "Still to do in this script:
     - Figure out how to import ldap server config!! ARGH!
