@@ -41,10 +41,44 @@ Using default of /var/www/casdev/web/
     dbprefix='casdev'
     
     
-    #else d9
     #else d8
-    #else exit    
+elif [ "$docroot" = "d8" ]
+then
+    echo "your docroot choice has been d8, the path will be 
+   /var/www/drupal8/web/
+
+  NOTE:  Please remember that you will need to adjust your computer's host file for a website in this docroot, or contact keith to get a redirect
+"
+
+    rootpath='/var/www/drupal8/web'
+    cd $rootpath/sites/
+
+    pwd
     
+    dbprefix='d8'
+
+    #d9
+    elif [ "$docroot" = "d9" ]
+then
+    echo "your docroot choice has been d8, the path will be 
+   /var/www/drupal9/web/
+
+  NOTE:  Please remember that you will need to adjust your computer's host file for a website in this docroot, or contact keith to get a redirect
+"
+
+    rootpath='/var/www/drupal9/web'
+    cd $rootpath/sites/
+
+    pwd
+    
+    dbprefix='d9'
+
+else
+    echo "you have made an incorrect selection for the docroot option, useage is:
+    Usage: $0 <full site url> <shortname> <docroot(d9, d8, or casdev[default])>
+    please make a correct choice, or don't supply a third option and try again
+    exiting.
+"
 fi
 
 year=$(date +'%y')
@@ -116,7 +150,7 @@ echo "<?php \$dbname = '$dbname';
 ?>" > dbinfo.php
 
 
-#drush -l $site site-install standard --account-name='$dbname'_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name='CAS Dev Server $short Site'
+echo "drush -l $site site-install standard --account-name='$dbname'_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name='CAS Dev Server $short Site'"
 #--db-url=mysql://$dbname:$pass@localhost/$dbname
 
 #module enabling
