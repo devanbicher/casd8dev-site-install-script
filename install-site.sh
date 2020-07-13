@@ -149,15 +149,17 @@ echo "<?php \$dbname = '$dbname';
 ?>" > dbinfo.php
 
 
-echo "drush -l $site site-install standard --account-name=""$dbname""_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name='$dbprefix $short Site (casd8devserver)'"
+echo "drush -l $site site-install standard --account-name=""$dbname""_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name='"$dbprefix" "$short" Site (casd8devserver)'"
 #--db-url=mysql://$dbname:$pass@localhost/$dbname
 
 drush -l $site site-install standard --account-name="$dbname"_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name='$dbprefix $short Site (casd8devserver)'
 
-#module enabling
-drush -y -l $site en ldap_authentication,admin_toolbar
+sitealias = "@""$dbprefix""."$short
 
-drush -l $site uli
+#module enabling
+drush -y $sitealias en ldap_authentication, admin_toolbar
+
+drush $sitealias uli
 
 echo "Still to do in this script:
     - Figure out how to import ldap server config!! ARGH!
@@ -214,12 +216,12 @@ search_pagination: false
 search_page_size: null
 
 Then run the following commands:
-drush @""$dbprefix"".$short cset --input-format=yaml ldap_authentication.settings sids '
+drush $sitealias cset --input-format=yaml ldap_authentication.settings sids '
 nis_lehigh: nis_lehigh'
 
-drush @""$dbprefix"".$short cset ldap_authentication.settings authenticaionMode '2'
+drush $sitealias cset ldap_authentication.settings authenticationMode '2'
 
-drush @""$dbprefix"".$short ucrt $USER
-drush @""$dbprefix"".$short urol administrator $USER
+drush $sitealias ucrt $USER
+drush $sitealias urol administrator $USER
 
 "
