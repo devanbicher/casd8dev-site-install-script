@@ -2,18 +2,20 @@
 
 set -e
 
-#need the docroot
-
 #sh <website folder> <dbname> <docroot>
+
+website=$1
+
+dbname=$2
 
 cd /var/www/casdev/web/sites
 
 
-rm -r $website
+sudo rm -r $website
 
 cd ../files
 
-rm -r $website
+sudo rm -r $website
 
 
 sudo mysql -e "drop database $dbname;"

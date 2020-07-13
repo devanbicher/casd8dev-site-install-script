@@ -152,9 +152,9 @@ echo "<?php \$dbname = '$dbname';
 echo "drush -l $site site-install standard --account-name=""$dbname""_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name='"$dbprefix" "$short" Site (casd8devserver)'"
 #--db-url=mysql://$dbname:$pass@localhost/$dbname
 
-drush -l $site site-install standard --account-name="$dbname"_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name='$dbprefix $short Site (casd8devserver)'
+drush -l $site site-install standard --account-name="$dbname"_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name=" $dbprefix $short Site (casd8devserver)"
 
-sitealias = "@""$dbprefix""."$short
+sitealias="@""$dbprefix""."$short
 
 #module enabling
 drush -y $sitealias en ldap_authentication, admin_toolbar
@@ -215,12 +215,11 @@ grp_test_grp_dn_writeable: ''
 search_pagination: false
 search_page_size: null
 
-Then run the following commands:
-drush $sitealias cset --input-format=yaml ldap_authentication.settings sids '
+Then run the following commands (you can copy and past the next 4 lines into your terminal if you are in the sites directory for your docroot):
+
+drush $sitealias -y cset --input-format=yaml ldap_authentication.settings sids '
 nis_lehigh: nis_lehigh'
-
-drush $sitealias cset ldap_authentication.settings authenticationMode '2'
-
+drush $sitealias -y cset ldap_authentication.settings authenticationMode '2'
 drush $sitealias ucrt $USER
 drush $sitealias urol administrator $USER
 
