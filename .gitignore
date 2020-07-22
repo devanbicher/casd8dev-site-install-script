@@ -1,5 +1,6 @@
 
 #don't need the folder with db info in it
 dbinfo/
+dbinfo
 
 shell_test.sh

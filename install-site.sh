@@ -29,7 +29,7 @@ fi
 if [ "$docroot" = "" ] || [ "$docroot" = "casdev"]
 then
     echo "no docroot provided (or you chose to use casdev, the default)
-Usage: $0 <full site url> <shortname> <docroot(d9, d8, or casdev[default])>
+Usage: $0 <full site url> <shortname> <docroot(drupal9, drupal8, emulsify, or casdev[default])>
 
 Using default of /var/www/casdev/web/
 "
@@ -42,43 +42,27 @@ Using default of /var/www/casdev/web/
     
     
     #else d8
-elif [ "$docroot" = "d8" ]
+elif [ "$docroot" = "drupal8" ] || [ "$docroot" = "drupal9" ] || [ "$docroot" = "emulsify" ]
 then
-    echo "your docroot choice has been d8, the path will be 
-   /var/www/drupal8/web/
+    echo "your docroot choice has been $docroot, the path will be 
+   /var/www/$docroot/web/
 
   NOTE:  Please remember that you will need to adjust your computer's host file for a website in this docroot, or contact keith to get a redirect
 "
 
-    rootpath='/var/www/drupal8/web'
+    rootpath='/var/www/'"$docroot"'/web'
     cd $rootpath/sites/
 
     pwd
     
-    dbprefix='d8'
-
-    #d9
-    elif [ "$docroot" = "d9" ]
-then
-    echo "your docroot choice has been d8, the path will be 
-   /var/www/drupal9/web/
-
-  NOTE:  Please remember that you will need to adjust your computer's host file for a website in this docroot, or contact keith to get a redirect
-"
-
-    rootpath='/var/www/drupal9/web'
-    cd $rootpath/sites/
-
-    pwd
-    
-    dbprefix='d9'
-
+    dbprefix="$docroot"
 else
     echo "you have made an incorrect selection for the docroot option, useage is:
     Usage: $0 <full site url> <shortname> <docroot(d9, d8, or casdev[default])>
     please make a correct choice, or don't supply a third option and try again
     exiting.
 "
+exit 1
 fi
 
 year=$(date +'%y')
@@ -157,7 +141,7 @@ drush -l $site site-install standard --account-name="$dbname"_cas_admin --accoun
 sitealias="@""$dbprefix""."$short
 
 #module enabling
-drush -y $sitealias en ldap_authentication, admin_toolbar
+drush -y $sitealias en ldap_authentication, admin_toolbar, devel
 
 drush $sitealias uli
 
