@@ -46,10 +46,10 @@ search_pagination: false
 search_page_size: null
 
 Then run the following commands:
-drush cset --input-format=yaml ldap_authentication.settings sids '
+drush -y cset  --input-format=yaml ldap_authentication.settings sids '
 nis_lehigh: nis_lehigh'
 
-drush cset ldap_authentication.settings authenticationMode '2'
+drush -y cset ldap_authentication.settings authenticationMode '2'
 
 drush ucrt $USER
 drush urol administrator $USER

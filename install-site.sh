@@ -48,6 +48,7 @@ then
    /var/www/$docroot/web/
 
   NOTE:  Please remember that you will need to adjust your computer's host file for a website in this docroot, or contact keith to get a redirect
+  NOTE: if you use the emulsify doc root, you will need to update apache to have that site work with that docroot
 "
 
     rootpath='/var/www/'"$docroot"'/web'
