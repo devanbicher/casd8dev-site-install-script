@@ -815,3 +815,9 @@ $databases['default']['default'] = array (
 require 'baseurl.php';
 
 $settings['base_url'] = $baseurl;
+
+# development settings, uncomment to activate.
+# NOT FOR PRODUCTION ENVIRONMENTS!!
+#$settings['container_yamls'][] = DRUPAL_ROOT . '/sites/development.services.yml';
+#$settings['cache']['bins']['render'] = 'cache.backend.null';
+#$settings['cache']['bins']['dynamic_page_cache'] = 'cache.backend.null'; 
