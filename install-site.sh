@@ -119,7 +119,7 @@ mkdir $rootpath/files/$short/config
 
 chmod o+w -R $rootpath/files/$short
 
-ln -s $rootpath/files .
+ln -s $rootpath/files/$short .
 
 echo "<?php  \$public_files_dir = 'files/$short'; ?> " > publicfiles.php
 
