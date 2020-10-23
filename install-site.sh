@@ -26,6 +26,9 @@ Usage: $0 <full site url> <shortname> <docroot>"
 exit 1
 fi
 
+#I might need to change this list depending on the docroot eventually
+enablemodules="ldap_authentication, admin_toolbar, devel, pathauto, token"
+
 if [ "$docroot" = "" ] || [ "$docroot" = "casdev"]
 then
     echo "no docroot provided (or you chose to use casdev, the default)
@@ -142,7 +145,7 @@ drush -l $site site-install standard --account-name="$dbname"_cas_admin --accoun
 sitealias="@""$dbprefix""."$short
 
 #module enabling
-drush -y $sitealias en ldap_authentication, admin_toolbar, devel
+drush -y $sitealias en "$enabledmodules"
 
 drush $sitealias uli
 
@@ -208,4 +211,5 @@ drush $sitealias -y cset ldap_authentication.settings authenticationMode '2'
 drush $sitealias ucrt $USER
 drush $sitealias urol administrator $USER
 
+Don't forget I changed how the modules are enabled, so check that and update this script accordingly (10-23-20)
 "
