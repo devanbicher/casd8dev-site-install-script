@@ -145,7 +145,7 @@ drush -l $site site-install standard --account-name="$dbname"_cas_admin --accoun
 sitealias="@""$dbprefix""."$short
 
 #module enabling
-drush -y $sitealias en "$enabledmodules"
+drush -y $sitealias pm-enable "$enabledmodules"
 
 drush $sitealias uli
 
