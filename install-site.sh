@@ -27,7 +27,7 @@ exit 1
 fi
 
 #I might need to change this list depending on the docroot eventually
-enablemodules="ldap_authentication, admin_toolbar, devel, pathauto, token"
+enablemodules="ldap_authentication, admin_toolbar, devel, pathauto, token, components"
 
 if [ "$docroot" = "" ] || [ "$docroot" = "casdev"]
 then
@@ -122,7 +122,7 @@ mkdir $rootpath/files/$short/config
 
 chmod o+w -R $rootpath/files/$short
 
-ln -s $rootpath/files/$short .
+ln -s $rootpath/files/$short files/
 
 echo "<?php  \$public_files_dir = 'files/$short'; ?> " > publicfiles.php
 
