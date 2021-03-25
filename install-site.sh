@@ -135,7 +135,7 @@ mkdir $rootpath/files/$short/config
 
 chmod o+w -R $rootpath/files/$short
 
-ln -s $rootpath/files/$short files/
+ln -s $rootpath/files/$short files
 
 echo "<?php  \$public_files_dir = 'files/$short'; ?> " > publicfiles.php
 
@@ -158,9 +158,11 @@ drush -l $site site-install standard --account-name="$dbname"_cas_admin --accoun
 sitealias="@""$dbprefix""."$short
 
 #module enabling
-drush -y $sitealias pm-enable "$enabledmodules"
+drush -y $sitealias pm-enable $enabledmodules
 
-drush $sitealias uli
+#drush $sitealias uli
+
+drush $sitealias -y cim --partial --source=global_config/ldap/nis_lehigh/
 
 echo "Still to do in this script:
     - Figure out how to import ldap server config!! ARGH!
@@ -217,12 +219,20 @@ search_pagination: false
 search_page_size: null
 
 Then run the following commands (you can copy and past the next 4 lines into your terminal if you are in the sites directory for your docroot):
-
+"
+echo "
+do these 2 if the import below doesn't work
 drush $sitealias -y cset --input-format=yaml ldap_authentication.settings sids '
 nis_lehigh: nis_lehigh'
 drush $sitealias -y cset ldap_authentication.settings authenticationMode '2'
-drush $sitealias ucrt $USER
-drush $sitealias urol administrator $USER
+"
+drush $sitealias -y cim --partial --source=global_config/ldap/
 
+drush $sitealias ucrt dlb213,taw219
+drush $sitealias urol administrator dlb213
+drush $sitealias urol administrator taw219
+
+echo "
+I don't remember what this means
 Don't forget I changed how the modules are enabled, so check that and update this script accordingly (10-23-20)
 "
