@@ -13,6 +13,8 @@ theme=$4
 # -d8
 # -d9
 
+echo "Reminder:  Services.yml has 2 debug settings turned on.  Settings.php has debug settings turned on at the bottom (uncomment last 3 lines)"
+
 echo " TO DO:
   1. if you are continuasly spinning up new emulsify themes either from scratch or as a branch from pre-existing repo,
      	add a command flag to create a new emulsify theme for the site
