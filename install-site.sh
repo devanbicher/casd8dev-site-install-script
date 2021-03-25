@@ -7,10 +7,17 @@ short=$2
 
 #if the user doesn't specify the doc root use casdev
 docroot=$3
+theme=$4
 
 # flags
 # -d8
 # -d9
+
+echo " TO DO:
+  1. if you are continuasly spinning up new emulsify themes either from scratch or as a branch from pre-existing repo,
+     	add a command flag to create a new emulsify theme for the site
+"
+
 
 if [ "$site" = "" ]
 then
@@ -69,6 +76,12 @@ else
 exit 1
 fi
 
+if [ "$theme" = "" ]
+then
+    echo "NO THEME SELECTED, this site will NOT have a theme selected, you will manually need to choose the theme. "
+    
+fi
+    
 year=$(date +'%y')
 
 pass=$(pwgen -s 16)
