@@ -235,6 +235,11 @@ drush $sitealias urol administrator dlb213
 drush $sitealias urol administrator taw219
 
 echo "
-I don't remember what this means
-Don't forget I changed how the modules are enabled, so check that and update this script accordingly (10-23-20)
+ANOTHER TO-DO:
+ -- Remove the other to-do outputs
+ -- Make sure the partial config import works
+    -- then remove the long ldap config output
+ -- For theme enabling
+ --  drush config-set system.theme default THEME_NAME
+
 "
