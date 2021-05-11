@@ -176,6 +176,6 @@ drush $sitealias ucrt taw219
 drush $sitealias urol administrator dlb213
 drush $sitealias urol administrator taw219
 
-drush uli --name="$USER"
+drush $sitealias uli --name="$USER"
 
 echo "REMINDER:  Services.yml has 2 debug settings turned on.  Settings.php has debug settings turned on at the bottom (uncomment last 3 lines)"
