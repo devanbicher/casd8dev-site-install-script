@@ -13,14 +13,6 @@ theme=$4
 # -d8
 # -d9
 
-echo "Reminder:  Services.yml has 2 debug settings turned on.  Settings.php has debug settings turned on at the bottom (uncomment last 3 lines)"
-
-echo " TO DO:
-  1. if you are continuasly spinning up new emulsify themes either from scratch or as a branch from pre-existing repo,
-     	add a command flag to create a new emulsify theme for the site
-"
-
-
 if [ "$site" = "" ]
 then
     echo "No site url provided
@@ -34,9 +26,6 @@ then
 Usage: $0 <full site url> <shortname> <docroot>"
 exit 1
 fi
-
-#I might need to change this list depending on the docroot eventually
-enablemodules="ldap_authentication, admin_toolbar, devel, pathauto, token, components"
 
 if [ "$docroot" = "" ] || [ "$docroot" = "casdev"]
 then
@@ -159,69 +148,21 @@ drush -l $site site-install standard --account-name="$dbname"_cas_admin --accoun
 
 sitealias="@""$dbprefix""."$short
 
-#module enabling
-drush -y $sitealias pm-enable $enabledmodules
-
-#drush $sitealias uli
+echo "enabling modules... "
+while read mod; do
+    drush $sitealias -y pm-enable "$mod"
+done </home/dlb213/install-site/modules.txt 
 
 drush $sitealias -y cim --partial --source=global_config/ldap/nis_lehigh/
 
 echo "Still to do in this script:
-    - Figure out how to import ldap server config!! ARGH!
-      -update ldap_authentication.settings config
     - send an email to the user with the info
-    - TURN ON development mode, YOU NEED THIS
-    
+    For theme enabling
+    --  drush config-set system.theme default THEME_NAME
     Eventually:
     - move the site config, modules, ldap, etc to an install profile
+    "
 
-FOR NOW (until I get ldap config import figured out:
-go to https://$site/admin/config/development/configuration/single/import
-
-copy the following into the input area after selecting LDAP Server from the dropdown list
-
-langcode: en
-status: true
-dependencies: {  }
-id: nis_lehigh
-label: nis.cc.lehigh.edu
-type: openldap
-address: nis.cc.lehigh.edu
-port: 389
-timeout: 10
-tls: false
-followrefs: null
-weight: null
-bind_method: user
-binddn: null
-bindpw: null
-basedn: 'dc=lehigh,dc=edu'
-user_attr: uid
-account_name_attr: ''
-mail_attr: mail
-mail_template: ''
-picture_attr: ''
-unique_persistent_attr: ''
-unique_persistent_attr_binary: false
-user_dn_expression: 'uid=%username,%basedn'
-testing_drupal_username: ''
-testing_drupal_user_dn: ''
-grp_unused: false
-grp_object_cat: ''
-grp_nested: false
-grp_user_memb_attr_exists: false
-grp_user_memb_attr: ''
-grp_memb_attr: ''
-grp_memb_attr_match_user_attr: ''
-grp_derive_from_dn: '0'
-grp_derive_from_dn_attr: ''
-grp_test_grp_dn: ''
-grp_test_grp_dn_writeable: ''
-search_pagination: false
-search_page_size: null
-
-Then run the following commands (you can copy and past the next 4 lines into your terminal if you are in the sites directory for your docroot):
-"
 echo "
 do these 2 if the import below doesn't work
 drush $sitealias -y cset --input-format=yaml ldap_authentication.settings sids '
@@ -230,16 +171,11 @@ drush $sitealias -y cset ldap_authentication.settings authenticationMode '2'
 "
 drush $sitealias -y cim --partial --source=global_config/ldap/
 
-drush $sitealias ucrt dlb213,taw219
+drush $sitealias ucrt dlb213
+drush $sitealias ucrt taw219
 drush $sitealias urol administrator dlb213
 drush $sitealias urol administrator taw219
 
-echo "
-ANOTHER TO-DO:
- -- Remove the other to-do outputs
- -- Make sure the partial config import works
-    -- then remove the long ldap config output
- -- For theme enabling
- --  drush config-set system.theme default THEME_NAME
+drush uli --name="$USER"
 
-"
+echo "REMINDER:  Services.yml has 2 debug settings turned on.  Settings.php has debug settings turned on at the bottom (uncomment last 3 lines)"

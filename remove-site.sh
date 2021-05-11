@@ -11,11 +11,11 @@ dbname=$2
 cd /var/www/casdev/web/sites
 
 
-sudo rm -r $website
+sudo rm -rf $website
 
 cd ../files
 
-sudo rm -r $website
+sudo rm -rf $website
 
 
 sudo mysql -e "drop database $dbname;"
