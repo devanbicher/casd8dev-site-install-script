@@ -111,8 +111,8 @@ $short:
 drush cc drush
 
 #setup php files for new site
-
-cp -r ~/install-site/site-default $short
+mkdir $short
+cp ~/install-site/site-default/ $short/
 chgrp -R drupaladm $short
 cd $short
 
@@ -123,6 +123,7 @@ echo "<?php  \$baseurl = 'https://$site'; ?>" > baseurl.php
 mkdir $rootpath/files/$short
 mkdir $rootpath/files/$short/private
 mkdir $rootpath/files/$short/config
+cp -r ~/install-site/site-default/startup/ $rootpath/files/$short/
 
 chmod o+w -R $rootpath/files/$short
 
@@ -176,6 +177,6 @@ drush $sitealias ucrt taw219
 drush $sitealias urol administrator dlb213
 drush $sitealias urol administrator taw219
 
-drush uli --name="$USER"
+drush $sitealias uli --name="$USER"
 
 echo "REMINDER:  Services.yml has 2 debug settings turned on.  Settings.php has debug settings turned on at the bottom (uncomment last 3 lines)"
