@@ -6,12 +6,8 @@ site=$1
 short=$2
 
 #if the user doesn't specify the doc root use casdev
-docroot=$3
-theme=$4
+install_profile=$3
 
-# flags
-# -d8
-# -d9
 
 if [ "$site" = "" ]
 then
@@ -27,51 +23,15 @@ Usage: $0 <full site url> <shortname> <docroot>"
 exit 1
 fi
 
-if [ "$docroot" = "" ] || [ "$docroot" = "casdev"]
-then
-    echo "no docroot provided (or you chose to use casdev, the default)
-Usage: $0 <full site url> <shortname> <docroot(drupal9, drupal8, emulsify, or casdev[default])>
-
-Using default of /var/www/casdev/web/
+echo "This script uses the docroot
+    /var/www/casdev/web/
+use basic-site-install.sh to choose a different docroot
 "
-    rootpath='/var/www/casdev/web'
-    cd $rootpath/sites/
-
-    pwd
+rootpath='/var/www/casdev/web'
+cd $rootpath/sites/
+pwd     
+dbprefix='casdev'
     
-    dbprefix='casdev'
-    
-    
-    #else d8
-elif [ "$docroot" = "drupal8" ] || [ "$docroot" = "drupal9" ] || [ "$docroot" = "emulsify" ]
-then
-    echo "your docroot choice has been $docroot, the path will be 
-   /var/www/$docroot/web/
-
-  NOTE:  Please remember that you will need to adjust your computer's host file for a website in this docroot, or contact keith to get a redirect
-  NOTE: if you use the emulsify doc root, you will need to update apache to have that site work with that docroot
-"
-
-    rootpath='/var/www/'"$docroot"'/web'
-    cd $rootpath/sites/
-
-    pwd
-    
-    dbprefix="$docroot"
-else
-    echo "you have made an incorrect selection for the docroot option, useage is:
-    Usage: $0 <full site url> <shortname> <docroot(d9, d8, or casdev[default])>
-    please make a correct choice, or don't supply a third option and try again
-    exiting.
-"
-exit 1
-fi
-
-if [ "$theme" = "" ]
-then
-    echo "NO THEME SELECTED, this site will NOT have a theme selected, you will manually need to choose the theme. "
-    
-fi
     
 year=$(date +'%y')
 
@@ -112,8 +72,10 @@ drush cc drush
 
 #setup php files for new site
 mkdir $short
-cp ~/install-site/site-default/ $short/
+cp ~/install-site/site-default/* $short/
 chgrp -R drupaladm $short
+chmod u+w $short
+chmod g+w $short
 cd $short
 
 #baseurl file
@@ -123,9 +85,10 @@ echo "<?php  \$baseurl = 'https://$site'; ?>" > baseurl.php
 mkdir $rootpath/files/$short
 mkdir $rootpath/files/$short/private
 mkdir $rootpath/files/$short/config
-cp -r ~/install-site/site-default/startup/ $rootpath/files/$short/
+cp -r ~/install-site/startup-images/ $rootpath/files/$short/
 
-chmod o+w -R $rootpath/files/$short
+chgrp -R drupalweb $rootpath/files/$short
+chmod -R g+w $rootpath/files/$short
 
 ln -s $rootpath/files/$short files
 
@@ -142,41 +105,17 @@ echo "<?php \$dbname = '$dbname';
 ?>" > dbinfo.php
 
 
-echo "drush -l $site site-install standard --account-name=""$dbname""_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name='"$dbprefix" "$short" Site (casd8devserver)'"
+#echo "drush -l $site site-install standard --account-name=""$dbname""_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name='"$dbprefix" "$short" Site (casd8devserver)'"
 #--db-url=mysql://$dbname:$pass@localhost/$dbname
 
-drush -l $site site-install standard --account-name="$dbname"_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name=" $dbprefix $short Site (casd8devserver)"
+echo "installing the site with our install profile"
 
 sitealias="@""$dbprefix""."$short
 
-echo "enabling modules... "
-while read mod; do
-    drush $sitealias -y pm-enable "$mod"
-done </home/dlb213/install-site/modules.txt 
+drush -l $site site-install test_profile --account-name="$dbname"_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name=" $dbprefix $short Site (casd8devserver)"
 
-drush $sitealias -y cim --partial --source=global_config/ldap/nis_lehigh/
+drush $sitealias -y cr 
+drush $sitealias -y updb
+drush $sitealias -y config:export
 
-echo "Still to do in this script:
-    - send an email to the user with the info
-    For theme enabling
-    --  drush config-set system.theme default THEME_NAME
-    Eventually:
-    - move the site config, modules, ldap, etc to an install profile
-    "
-
-echo "
-do these 2 if the import below doesn't work
-drush $sitealias -y cset --input-format=yaml ldap_authentication.settings sids '
-nis_lehigh: nis_lehigh'
-drush $sitealias -y cset ldap_authentication.settings authenticationMode '2'
-"
-drush $sitealias -y cim --partial --source=global_config/ldap/
-
-drush $sitealias ucrt dlb213
-drush $sitealias ucrt taw219
-drush $sitealias urol administrator dlb213
-drush $sitealias urol administrator taw219
-
-drush $sitealias uli --name="$USER"
-
-echo "REMINDER:  Services.yml has 2 debug settings turned on.  Settings.php has debug settings turned on at the bottom (uncomment last 3 lines)"
+echo "REMINDER:  Services.yml has 2 debug settings turned on.  Settings.php has debug settings turned on at the bottom (uncomment last 3 lines "

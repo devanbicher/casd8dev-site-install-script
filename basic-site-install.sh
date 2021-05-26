@@ -123,7 +123,7 @@ echo "<?php  \$baseurl = 'https://$site'; ?>" > baseurl.php
 mkdir $rootpath/files/$short
 mkdir $rootpath/files/$short/private
 mkdir $rootpath/files/$short/config
-cp -r ~/install-site/site-default/startup/ $rootpath/files/$short/
+cp -r ~/install-site/startup-images/ $rootpath/files/$short/
 
 chmod o+w -R $rootpath/files/$short
 
