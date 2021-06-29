@@ -5,21 +5,18 @@ set -e
 site=$1
 short=$2
 
-#if the user doesn't specify the doc root use casdev
-install_profile=$3
-
 
 if [ "$site" = "" ]
 then
     echo "No site url provided
-Usage: $0 <full site url> <shortname> <docroot>"
+Usage: $0 <full site url> <shortname> "
 exit 1
 fi
 
 if [ "$short" = "" ]
 then
     echo "No name provided
-Usage: $0 <full site url> <shortname> <docroot>"
+Usage: $0 <full site url> <shortname> "
 exit 1
 fi
 
@@ -78,24 +75,10 @@ chmod u+w $short
 chmod g+w $short
 cd $short
 
-#baseurl file
-echo "<?php  \$baseurl = 'https://$site'; ?>" > baseurl.php
-
-#files directory
-mkdir $rootpath/files/$short
-mkdir $rootpath/files/$short/private
-mkdir $rootpath/files/$short/config
-cp -r ~/install-site/startup-images/ $rootpath/files/$short/
-
-chgrp -R drupalweb $rootpath/files/$short
-chmod -R g+w $rootpath/files/$short
-
-ln -s $rootpath/files/$short files
-
-echo "<?php  \$public_files_dir = 'files/$short'; ?> " > publicfiles.php
-
-#hashsalt
-echo "<?php  \$hash_salt = '$(pwgen -s 75)'; ?>" > hash_salt.php
+mkdir themes
+chgrp drupaladm themes
+chmod g+w themes
+chmod g+s themes
 
 #db info file
 echo "<?php \$dbname = '$dbname';
@@ -104,6 +87,26 @@ echo "<?php \$dbname = '$dbname';
 \$dbhost = 'localhost';
 ?>" > dbinfo.php
 
+#baseurl file
+echo "<?php  \$baseurl = 'https://$site'; ?>" > baseurl.php
+
+echo "<?php  \$public_files_dir = 'files/$short'; ?> " > publicfiles.php
+
+#hashsalt
+echo "<?php  \$hash_salt = '$(pwgen -s 75)'; ?>" > hash_salt.php
+
+#files directory
+mkdir $rootpath/files/$short
+mkdir $rootpath/files/$short/private
+mkdir $rootpath/files/$short/config
+#don't need this for now. we changed how we do to the footer social media menu. 
+#cp -r ~/install-site/startup-images/ $rootpath/files/$short/
+
+chgrp -R drupalweb $rootpath/files/$short
+chmod -R g+w $rootpath/files/$short
+chmod -R g+s $rootpath/files/$short
+
+ln -s $rootpath/files/$short files
 
 #echo "drush -l $site site-install standard --account-name=""$dbname""_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name='"$dbprefix" "$short" Site (casd8devserver)'"
 #--db-url=mysql://$dbname:$pass@localhost/$dbname
@@ -112,10 +115,43 @@ echo "installing the site with our install profile"
 
 sitealias="@""$dbprefix""."$short
 
-drush -l $site site-install test_profile --account-name="$dbname"_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name=" $dbprefix $short Site (casd8devserver)"
+drush -l $site site-install cas_department --account-name="$dbname"_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name=" $dbprefix $short Site (casd8devserver)"
 
+echo "clearing caches"
 drush $sitealias -y cr 
+echo "running an updb"
 drush $sitealias -y updb
+echo "doing a config export"
 drush $sitealias -y config:export
 
+now=$(date +'%H%M-%m%d%y')
+#now copy the config folder to another folder to 'save ' initial config
+cd $rootpath/files/$short
+cp -r config/ config-initial-$now
+#initialize git repo in config folder, add files, commit
+cd config
+git init
+git add ./*.yml
+git commit -am "initial commit after site installation, config same as cas department profile"
+
+echo "setting up git stuff for the theme.  This is only for development 
+"
+cd $rootpath/sites/$short/themes
+git clone ssh://git@gogs.cc.lehigh.edu:2222/cas-web-team/cas_base.git
+cd cas_base
+
+echo " 
+running yarn stuff. this might take a bit
+"
+yarn 
+yarn build
+
+drush $sitealias -y cr 
+
 echo "REMINDER:  Services.yml has 2 debug settings turned on.  Settings.php has debug settings turned on at the bottom (uncomment last 3 lines "
+
+
+echo "
+NEW UPDATES TO MAKE:
+add a dev flag which, for now runs the yarn stuff, since that takes the longest
+"
