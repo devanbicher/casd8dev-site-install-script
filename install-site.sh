@@ -4,21 +4,40 @@ set -e
 
 site=$1
 short=$2
-
+themeflag=$3
 
 if [ "$site" = "" ]
 then
     echo "No site url provided
-Usage: $0 <full site url> <shortname> "
+Usage: $0 <full site url> <shortname> [--notheme]"
 exit 1
 fi
 
 if [ "$short" = "" ]
 then
     echo "No name provided
-Usage: $0 <full site url> <shortname> "
+Usage: $0 <full site url> <shortname> [--notheme]"
 exit 1
 fi
+
+#set theme variable true first
+theme=1
+
+# put an initial if of '--' if you add other command line options
+if [ "$themeflag" != "" ]
+then
+    if [ "$themeflag" = "--notheme" ]
+    then
+        theme=0
+    else
+    echo "you specified an option but didn't use --nodev, you put:  $themeflag 
+        did you mean to you '--notheme'?
+        exiting"
+    exit 1
+    fi
+fi
+
+
 
 echo "This script uses the docroot
     /var/www/casdev/web/
@@ -134,24 +153,32 @@ git init
 git add ./*.yml
 git commit -am "initial commit after site installation, config same as cas department profile"
 
-echo "setting up git stuff for the theme.  This is only for development 
-"
-cd $rootpath/sites/$short/themes
-git clone ssh://git@gogs.cc.lehigh.edu:2222/cas-web-team/cas_base.git
-cd cas_base
 
-echo " 
-running yarn stuff. this might take a bit
-"
-yarn 
-yarn build
+if [ "$theme" -eq "1" ]
+then
+    echo "setting up git stuff for the theme.  This is only for development 
+    "
+    cd $rootpath/sites/$short/themes
+    git clone ssh://git@gogs.cc.lehigh.edu:2222/cas-web-team/cas_base.git
+    cd cas_base
 
-drush $sitealias -y cr 
+    echo " 
+    running yarn stuff. this might take a bit
+    "
+    yarn 
+    yarn build
 
-echo "REMINDER:  Services.yml has 2 debug settings turned on.  Settings.php has debug settings turned on at the bottom (uncomment last 3 lines "
+    drush $sitealias -y cr 
+else
+    echo "not pulling and setting up the theme. hope that wasn't a mistake"
+fi
+
+
+echo "REMINDER:  Services.yml has 2 debug settings turned on.  Settings.php has debug settings turned on at the bottom (uncomment last 3 lines 
+                when (if?) you split the default profile into a dev version, or implement config split, remove those lines from debug settings."
 
 
 echo "
 NEW UPDATES TO MAKE:
-add a dev flag which, for now runs the yarn stuff, since that takes the longest
+yay! nothing for now.
 "
