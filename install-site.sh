@@ -150,6 +150,9 @@ cp -r config/ config-initial-$now
 #initialize git repo in config folder, add files, commit
 cd config
 git init
+echo "#default gitignore file for config folder, provided by install script" > .gitignore 
+echo ".htaccess" >> .gitignore
+git add .gitignore
 git add ./*.yml
 git commit -am "initial commit after site installation, config same as cas department profile"
 
