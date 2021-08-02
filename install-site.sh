@@ -117,6 +117,7 @@ echo "<?php  \$hash_salt = '$(pwgen -s 75)'; ?>" > hash_salt.php
 #files directory
 mkdir $rootpath/files/$short
 mkdir $rootpath/files/$short/private
+mkdir $rootpath/files/$short/private/backup_migrate
 mkdir $rootpath/files/$short/config
 #don't need this for now. we changed how we do to the footer social media menu. 
 #cp -r ~/install-site/startup-images/ $rootpath/files/$short/
