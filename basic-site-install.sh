@@ -117,7 +117,7 @@ chgrp -R drupaladm $short
 cd $short
 
 #baseurl file
-echo "<?php  \$baseurl = 'https://$site'; ?>" > baseurl.php
+echo "<?php  \$baseurl = 'https://$site'; " > baseurl.php
 
 #files directory
 mkdir $rootpath/files/$short
@@ -129,17 +129,17 @@ chmod o+w -R $rootpath/files/$short
 
 ln -s $rootpath/files/$short files
 
-echo "<?php  \$public_files_dir = 'files/$short'; ?> " > publicfiles.php
+echo "<?php  \$public_files_dir = 'files/$short';  " > publicfiles.php
 
 #hashsalt
-echo "<?php  \$hash_salt = '$(pwgen -s 75)'; ?>" > hash_salt.php
+echo "<?php  \$hash_salt = '$(pwgen -s 75)'; " > hash_salt.php
 
 #db info file
 echo "<?php \$dbname = '$dbname';
 \$dbuser = '$dbname';
 \$dbpass = '$pass';
 \$dbhost = 'localhost';
-?>" > dbinfo.php
+" > dbinfo.php
 
 
 echo "drush -l $site site-install standard --account-name=""$dbname""_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name='"$dbprefix" "$short" Site (casd8devserver)'"
