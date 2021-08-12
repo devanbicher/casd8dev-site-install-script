@@ -103,16 +103,15 @@ chmod g+s themes
 echo "<?php \$dbname = '$dbname';
 \$dbuser = '$dbname';
 \$dbpass = '$pass';
-\$dbhost = 'localhost';
-?>" > dbinfo.php
+\$dbhost = 'localhost'; " > dbinfo.php
 
 #baseurl file
-echo "<?php  \$baseurl = 'https://$site'; ?>" > baseurl.php
+echo "<?php  \$baseurl = 'https://$site'; " > baseurl.php
 
-echo "<?php  \$public_files_dir = 'files/$short'; ?> " > publicfiles.php
+echo "<?php  \$public_files_dir = 'files/$short'; " > publicfiles.php
 
 #hashsalt
-echo "<?php  \$hash_salt = '$(pwgen -s 75)'; ?>" > hash_salt.php
+echo "<?php  \$hash_salt = '$(pwgen -s 75)'; " > hash_salt.php
 
 #files directory
 mkdir $rootpath/files/$short
