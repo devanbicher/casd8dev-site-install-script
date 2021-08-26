@@ -134,7 +134,7 @@ echo "installing the site with our install profile"
 
 sitealias="@""$dbprefix""."$short
 
-drush -l $site site-install cas_department --account-name="$dbname"_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name=" $dbprefix $short Site (casd8devserver)"
+drush -l $site site-install cas_department --account-name="$dbname"_cas_admin --account-mail=incasweb@lehigh.edu --site-mail=incasweb@lehigh.edu --account-pass=$(pwgen 16) --site-name=" $dbprefix $short (casd8dev)"
 
 echo "clearing caches"
 drush $sitealias -y cr 
