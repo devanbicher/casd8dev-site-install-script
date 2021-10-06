@@ -30,7 +30,7 @@ then
     then
         theme=0
     else
-    echo "you specified an option but didn't use --nodev, you put:  $themeflag 
+    echo "you specified an option but didn't use --notheme, you put:  $themeflag 
         did you mean to you '--notheme'?
         exiting"
     exit 1
